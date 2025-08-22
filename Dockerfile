@@ -1,14 +1,23 @@
 FROM ubuntu:latest
 
+# Set non-interactive mode for apt
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install dependencies
 RUN apt-get update && apt-get install -y \
     python3.10 \
     python3-pip \
-    git
+    git \
+    && apt-get clean
 
-RUN pip3 install PyYAML
+# Install Python packages
+RUN pip3 install --no-cache-dir PyYAML
 
-COPY feed.py /usr/bin/feed.py
-
+# Copy scripts
+COPY feed.py /usr/local/bin/feed.py
 COPY entrypoint.sh /entrypoint.sh
+
+# Make entrypoint executable
+RUN chmod +x /entrypoint.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
